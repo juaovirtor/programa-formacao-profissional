@@ -1,0 +1,61 @@
+import {
+  Award,
+  BadgeCheck,
+  Briefcase,
+  Building2,
+  CalendarDays,
+  Clock,
+  Cpu,
+  FileText,
+  Handshake,
+  LayoutGrid,
+  Lightbulb,
+  ListChecks,
+  MapPin,
+  MessageSquare,
+  MessagesSquare,
+  MonitorCog,
+  Rocket,
+  Scale,
+  ShieldCheck,
+  Sparkles,
+  TrendingUp,
+  UserCheck,
+  Users,
+  Wallet,
+  Wrench,
+} from "lucide-react";
+
+const map = {
+  Award,
+  BadgeCheck,
+  Briefcase,
+  Building2,
+  CalendarDays,
+  Clock,
+  Cpu,
+  FileText,
+  Handshake,
+  LayoutGrid,
+  Lightbulb,
+  ListChecks,
+  MapPin,
+  MessageSquare,
+  MessagesSquare,
+  MonitorCog,
+  Rocket,
+  Scale,
+  ShieldCheck,
+  Sparkles,
+  TrendingUp,
+  UserCheck,
+  Users,
+  Wallet,
+  Wrench,
+};
+
+/** Resolve o ícone pelo nome usado em src/data/program.js. */
+export default function Icon({ name, ...props }) {
+  const Cmp = map[name] ?? Sparkles;
+  return <Cmp {...props} />;
+}

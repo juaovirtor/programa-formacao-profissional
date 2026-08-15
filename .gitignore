@@ -1,0 +1,18 @@
+node_modules
+dist
+.DS_Store
+
+# variáveis de ambiente (nunca versionar — contêm a senha do painel)
+.env
+.env.*
+!.env.example
+
+# dados e arquivos enviados pelos candidatos
+server/data
+server/uploads
+
+# cache do Netlify em builds locais
+.netlify
+
+# configuração local de ferramentas de desenvolvimento
+.claude/

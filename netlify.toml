@@ -1,0 +1,33 @@
+# Configuração de publicação no Netlify (somente o site).
+#
+# A API (pasta server/) NÃO roda aqui — ela fica em um serviço Node
+# separado e é apontada pela variável VITE_API_URL.
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# VITE_API_URL deve ser definida em:
+# Netlify → Site configuration → Environment variables
+# Ex.: VITE_API_URL = https://api-programa.onrender.com
+#
+# Não defina aqui nenhuma variável com senha, token ou service role key —
+# tudo que entra no build fica visível no navegador.
+
+# O site é uma SPA: qualquer rota (inclusive /admin) devolve o index.html,
+# senão recarregar a página em /admin daria 404.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "SAMEORIGIN"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
