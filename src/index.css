@@ -177,6 +177,10 @@ label {
 .particle {
   animation: float-slow 9s ease-in-out infinite;
 }
+/* Fora da tela não gasta GPU nem bateria. */
+.particulas-pausadas .particle {
+  animation-play-state: paused;
+}
 
 /* Linha de conexão da timeline */
 @keyframes pulse-line {
@@ -282,6 +286,81 @@ select.field {
 select.field option {
   background: #0b1120;
   color: #fff;
+}
+
+/* ============================================================
+   REVEAL — entrada das seções (um observer só, transição em CSS)
+   ============================================================ */
+.reveal {
+  opacity: 0;
+  transform: translateY(var(--reveal-y, 22px));
+  transition:
+    opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--reveal-delay, 0s);
+}
+.reveal-visivel {
+  opacity: 1;
+  transform: none;
+}
+
+/* ============================================================
+   ENTRADA DO HERO — substitui o Framer Motion por CSS
+   ============================================================ */
+@keyframes surge {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.surge {
+  animation: surge 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: var(--surge-delay, 0s);
+}
+
+@keyframes surge-escala {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.surge-escala {
+  animation: surge-escala 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: var(--surge-delay, 0s);
+}
+
+/* Troca de etapa do formulário */
+@keyframes etapa-entra {
+  from {
+    opacity: 0;
+    transform: translateX(22px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.etapa-entra {
+  animation: etapa-entra 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ============================================================
+   SEÇÕES ABAIXO DA DOBRA
+   O navegador pula layout e pintura do que está fora da tela.
+   `auto` no contain-intrinsic-size faz o tamanho real ser memorizado
+   depois da primeira renderização, evitando saltos na barra de rolagem.
+   ============================================================ */
+.secao-adiada {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 700px;
 }
 
 /* ============================================================

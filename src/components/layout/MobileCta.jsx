@@ -10,18 +10,32 @@ export default function MobileCta({ onCta, hideWhenVisible = "#inscricao" }) {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => {
-      const target = document.querySelector(hideWhenVisible);
-      const pastHero = window.scrollY > window.innerHeight * 0.7;
-      let formVisible = false;
-      if (target) {
-        const rect = target.getBoundingClientRect();
-        formVisible = rect.top < window.innerHeight * 0.85 && rect.bottom > 0;
+    // O elemento é buscado uma vez, não a cada evento de rolagem.
+    let alvo = document.querySelector(hideWhenVisible);
+    let agendado = false;
+
+    const avaliar = () => {
+      agendado = false;
+      if (!alvo) alvo = document.querySelector(hideWhenVisible);
+
+      const passouDoHero = window.scrollY > window.innerHeight * 0.7;
+      let formularioVisivel = false;
+      if (alvo) {
+        const rect = alvo.getBoundingClientRect();
+        formularioVisivel = rect.top < window.innerHeight * 0.85 && rect.bottom > 0;
       }
-      setShow(pastHero && !formVisible);
+      setShow(passouDoHero && !formularioVisivel);
     };
 
-    onScroll();
+    // A leitura de layout acontece no máximo uma vez por quadro, dentro do
+    // rAF — nunca no meio do processamento do evento de rolagem.
+    const onScroll = () => {
+      if (agendado) return;
+      agendado = true;
+      requestAnimationFrame(avaliar);
+    };
+
+    avaliar();
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
     return () => {
@@ -33,7 +47,7 @@ export default function MobileCta({ onCta, hideWhenVisible = "#inscricao" }) {
   return (
     <div
       aria-hidden={!show}
-      className={`fixed inset-x-0 bottom-0 z-40 border-t border-line-soft bg-void/92 px-4 pb-[max(14px,env(safe-area-inset-bottom))] pt-3.5 backdrop-blur-xl transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] lg:hidden ${
+      className={`fixed inset-x-0 bottom-0 z-40 border-t border-line-soft bg-void/97 px-4 pb-[max(14px,env(safe-area-inset-bottom))] pt-3.5 transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] lg:hidden ${
         show ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-full opacity-0"
       }`}
     >

@@ -13,9 +13,9 @@ export default function Footer() {
       <Container>
         <div className="flex flex-col gap-10 lg:flex-row lg:items-start lg:justify-between">
           <div className="max-w-[340px]">
-            {/* LOGO DO GRUPO — /public/assets/logo-grupo-phoenix.png */}
+            {/* LOGO DO GRUPO — /public/assets/logo-grupo-phoenix.webp */}
             <img
-              src="/assets/logo-grupo-phoenix.png"
+              src="/assets/logo-grupo-phoenix.webp"
               alt="Group Phoenix"
               className="h-8 w-auto"
               width="121"
@@ -26,13 +26,13 @@ export default function Footer() {
               {marca.grupo}, para preparar os jovens de Reserva · PR para o mercado de trabalho.
             </p>
 
-            {/* LOGO DA INICIATIVA — /public/assets/logo-visual-software.png */}
+            {/* LOGO DA INICIATIVA — /public/assets/logo-visual-software.webp */}
             <div className="mt-6 border-t border-line-soft pt-5">
               <p className="font-display text-[10px] font-semibold uppercase tracking-[0.2em] text-mute">
                 Uma iniciativa
               </p>
               <img
-                src="/assets/logo-visual-software.png"
+                src="/assets/logo-visual-software.webp"
                 alt={marca.empresa}
                 className="mt-3 h-8 w-auto"
                 width="141"

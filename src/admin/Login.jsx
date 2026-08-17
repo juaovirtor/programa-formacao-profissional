@@ -29,7 +29,7 @@ export default function Login({ onEntrar }) {
       </div>
 
       <form onSubmit={submeter} className="edge w-full max-w-[400px] rounded-3xl border border-line bg-panel/70 p-7 sm:p-9">
-        <img src="/assets/logo-grupo-phoenix.png" alt="Group Phoenix" className="h-7 w-auto" />
+        <img src="/assets/logo-grupo-phoenix.webp" alt="Group Phoenix" className="h-7 w-auto" />
 
         <h1 className="mt-7 font-display text-[22px] font-extrabold uppercase leading-tight tracking-tight text-white sm:text-[25px]">
           Painel de <span className="text-lime">inscrições</span>

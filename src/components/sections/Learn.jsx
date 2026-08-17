@@ -27,10 +27,10 @@ const accents = {
 
 export default function Learn() {
   return (
-    <section id="aprender" className="relative scroll-mt-20 overflow-hidden py-20 sm:py-28">
+    <section id="aprender" className="secao-adiada relative scroll-mt-20 overflow-hidden py-20 sm:py-28">
       <div aria-hidden className="absolute inset-0 -z-10">
         <div className="tech-grid absolute inset-0 opacity-30" />
-        <div className="absolute left-1/2 top-24 h-[420px] w-[560px] -translate-x-1/2 rounded-full bg-blue/8 blur-[140px]" />
+        <div className="absolute left-1/2 top-24 h-[420px] w-[560px] -translate-x-1/2 rounded-full bg-blue/8 blur-[65px] sm:blur-[140px]" />
       </div>
 
       <Container>

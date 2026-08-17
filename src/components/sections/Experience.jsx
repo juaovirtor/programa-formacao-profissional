@@ -5,7 +5,7 @@ import { experiencia, marca } from "../../data/program";
 
 export default function Experience() {
   return (
-    <section className="relative overflow-hidden py-20 sm:py-28">
+    <section className="secao-adiada relative overflow-hidden py-20 sm:py-28">
       <div aria-hidden className="absolute inset-0 -z-10">
         <div className="absolute inset-0 bg-[radial-gradient(80%_60%_at_50%_0%,rgba(43,140,255,0.12),transparent_65%)]" />
         <div className="tech-grid absolute inset-0 opacity-25" />

@@ -1,5 +1,4 @@
 import { useRef, useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
 import { AlertCircle, ArrowLeft, ArrowRight, Check, Loader2, Lock, Send, ShieldCheck } from "lucide-react";
 import Container from "../ui/Container";
 import Reveal from "../ui/Reveal";
@@ -49,7 +48,6 @@ export default function ApplicationForm() {
   const [success, setSuccess] = useState(null); // { protocolo }
   const [avisoAberto, setAvisoAberto] = useState(false);
   const cardRef = useRef(null);
-  const reduced = useReducedMotion();
 
   const set = (key, value) => {
     setData((prev) => ({ ...prev, [key]: value }));
@@ -133,18 +131,12 @@ export default function ApplicationForm() {
     }
   };
 
-  // Cada etapa é remontada (key={step}) e entra com uma transição curta.
-  const slide = {
-    initial: reduced ? false : { opacity: 0, x: 22 },
-    animate: { opacity: 1, x: 0 },
-    transition: { duration: 0.32, ease: [0.22, 1, 0.36, 1] },
-  };
 
   return (
     <section id="inscricao" className="relative scroll-mt-16 overflow-hidden py-16 sm:py-24">
       <div aria-hidden className="absolute inset-0 -z-10">
         <div className="absolute inset-0 bg-[radial-gradient(100%_70%_at_50%_0%,rgba(43,140,255,0.14),transparent_60%)]" />
-        <div className="absolute bottom-0 left-1/2 h-80 w-[80%] -translate-x-1/2 rounded-full bg-violet/10 blur-[130px]" />
+        <div className="absolute bottom-0 left-1/2 h-80 w-[80%] -translate-x-1/2 rounded-full bg-violet/10 blur-[60px] sm:blur-[130px]" />
       </div>
 
       <Container>
@@ -176,7 +168,7 @@ export default function ApplicationForm() {
                 <p className="mt-1.5 text-[13.5px] text-mute">{stepTitles[step].text}</p>
               </div>
 
-              <motion.div key={step} {...slide}>
+              <div key={step} className="etapa-entra">
                 {/* ---------------- ETAPA 01 — DADOS ---------------- */}
                 {step === 0 && (
                   <div className="space-y-5">
@@ -291,12 +283,7 @@ export default function ApplicationForm() {
                     </Field>
 
                     {data.origem === "Outro" && (
-                      <motion.div
-                        initial={reduced ? false : { opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-                        className="overflow-hidden"
-                      >
+                      <div className="etapa-entra overflow-hidden">
                         <div className="pt-1">
                           <Field label="Conte como ficou sabendo" htmlFor="origemOutro">
                             <textarea
@@ -309,7 +296,7 @@ export default function ApplicationForm() {
                             />
                           </Field>
                         </div>
-                      </motion.div>
+                      </div>
                     )}
                   </div>
                 )}
@@ -401,7 +388,7 @@ export default function ApplicationForm() {
                     )}
                   </div>
                 )}
-              </motion.div>
+              </div>
 
               {/* ---------------- NAVEGAÇÃO ---------------- */}
               <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">

@@ -6,7 +6,7 @@ import { marca, programInfo } from "../../data/program";
 
 export default function ProgramInfo() {
   return (
-    <section className="relative overflow-hidden py-20 sm:py-28">
+    <section className="secao-adiada relative overflow-hidden py-20 sm:py-28">
       <Container>
         <Reveal className="mx-auto max-w-[720px] text-center">
           <Eyebrow>Informações do programa</Eyebrow>

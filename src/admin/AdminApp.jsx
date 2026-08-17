@@ -82,7 +82,7 @@ export default function AdminApp() {
       <header className="sticky top-0 z-30 border-b border-line-soft bg-void/85 backdrop-blur-xl">
         <div className="mx-auto flex max-w-[1240px] items-center justify-between gap-4 px-5 py-3.5 sm:px-8">
           <div className="flex items-center gap-3">
-            <img src="/assets/logo-grupo-phoenix.png" alt="Group Phoenix" className="h-6 w-auto" />
+            <img src="/assets/logo-grupo-phoenix.webp" alt="Group Phoenix" className="h-6 w-auto" />
             <span className="hidden font-display text-[11px] font-semibold uppercase tracking-[0.18em] text-mute sm:block">
               Painel de inscrições
             </span>

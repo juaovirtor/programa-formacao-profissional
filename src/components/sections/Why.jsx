@@ -6,7 +6,7 @@ import { reasons } from "../../data/program";
 
 export default function Why() {
   return (
-    <section id="programa" className="relative scroll-mt-20 overflow-hidden py-20 sm:py-28">
+    <section id="programa" className="secao-adiada relative scroll-mt-20 overflow-hidden py-20 sm:py-28">
       <div aria-hidden className="absolute inset-0 -z-10">
         <div className="tech-grid absolute inset-0 opacity-25" />
       </div>

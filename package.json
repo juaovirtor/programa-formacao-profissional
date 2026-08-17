@@ -15,7 +15,6 @@
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
-    "framer-motion": "^11.18.2",
     "lucide-react": "^0.469.0",
     "multer": "^2.2.0",
     "react": "^18.3.1",

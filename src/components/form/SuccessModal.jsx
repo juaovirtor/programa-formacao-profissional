@@ -51,7 +51,7 @@ export default function SuccessModal({ open, protocolo, onClose }) {
         }`}
       >
         <div aria-hidden className="absolute inset-0 -z-10">
-          <div className="absolute -top-16 left-1/2 h-52 w-52 -translate-x-1/2 rounded-full bg-lime/18 blur-[90px]" />
+          <div className="absolute -top-16 left-1/2 h-52 w-52 -translate-x-1/2 rounded-full bg-lime/18 blur-[40px] sm:blur-[90px]" />
           <div className="tech-grid absolute inset-0 opacity-25" />
         </div>
 

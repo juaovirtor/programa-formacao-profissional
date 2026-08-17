@@ -1,4 +1,3 @@
-import { motion, useReducedMotion } from "framer-motion";
 import { ArrowDown, ArrowRight, BadgeCheck, Building2, CalendarDays, MapPin, Wallet } from "lucide-react";
 import Container from "../ui/Container";
 import Particles from "../ui/Particles";
@@ -12,22 +11,15 @@ const badges = [
 ];
 
 export default function Hero({ onCta }) {
-  const reduced = useReducedMotion();
-  const rise = (delay) => ({
-    initial: reduced ? false : { opacity: 0, y: 24 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.7, delay, ease: [0.22, 1, 0.36, 1] },
-  });
-
   return (
     <section id="topo" className="relative overflow-hidden pt-[104px] pb-16 sm:pt-[132px] sm:pb-24 lg:pt-[150px] lg:pb-28">
       {/* Fundo */}
       <div aria-hidden className="absolute inset-0 -z-10">
         <div className="absolute inset-0 bg-[radial-gradient(120%_85%_at_15%_0%,#0d1c3d_0%,#070b16_45%,#04060d_100%)]" />
         <div className="tech-grid tech-grid-fade absolute inset-0 opacity-70" />
-        <div className="absolute -left-24 top-10 h-[420px] w-[420px] rounded-full bg-blue/18 blur-[130px]" />
-        <div className="absolute right-0 top-40 h-[380px] w-[380px] rounded-full bg-violet/16 blur-[130px]" />
-        <div className="absolute bottom-0 left-1/3 h-[260px] w-[260px] rounded-full bg-lime/[0.07] blur-[120px]" />
+        <div className="absolute -left-24 top-10 h-[420px] w-[420px] rounded-full bg-blue/18 blur-[60px] sm:blur-[130px]" />
+        <div className="absolute right-0 top-40 h-[380px] w-[380px] rounded-full bg-violet/16 blur-[60px] sm:blur-[130px]" />
+        <div className="absolute bottom-0 left-1/3 h-[260px] w-[260px] rounded-full bg-lime/[0.07] blur-[55px] sm:blur-[120px]" />
         <Particles count={16} />
       </div>
 
@@ -35,7 +27,7 @@ export default function Hero({ onCta }) {
         <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14">
           {/* ---------------- COLUNA ESQUERDA ---------------- */}
           <div className="text-center lg:text-left">
-            <motion.div {...rise(0)} className="flex justify-center lg:justify-start">
+            <div style={{ "--surge-delay": "0s" }} className="surge flex justify-center lg:justify-start">
               <span className="inline-flex items-center gap-2 rounded-full border border-blue/35 bg-blue/10 px-4 py-2 font-display text-[10.5px] font-semibold uppercase tracking-[0.2em] text-blue-soft sm:text-[11px]">
                 <span className="relative flex h-1.5 w-1.5">
                   <span className="halo absolute inline-flex h-full w-full rounded-full bg-lime" />
@@ -43,11 +35,9 @@ export default function Hero({ onCta }) {
                 </span>
                 Programa de Formação Profissional
               </span>
-            </motion.div>
+            </div>
 
-            <motion.h1
-              {...rise(0.08)}
-              className="mt-6 font-display text-[38px] font-extrabold uppercase leading-[0.98] tracking-[-0.02em] sm:text-[52px] lg:text-[62px] xl:text-[68px]"
+            <h1 style={{ "--surge-delay": "0.08s" }} className="surge mt-6 font-display text-[38px] font-extrabold uppercase leading-[0.98] tracking-[-0.02em] sm:text-[52px] lg:text-[62px] xl:text-[68px]"
             >
               Seu futuro
               <br className="hidden sm:block" /> começa com o{" "}
@@ -69,20 +59,16 @@ export default function Hero({ onCta }) {
                 </svg>
               </span>
               <span className="text-lime">.</span>
-            </motion.h1>
+            </h1>
 
-            <motion.p
-              {...rise(0.16)}
-              className="mx-auto mt-7 max-w-[540px] text-[15.5px] leading-relaxed text-mute-soft sm:text-[17px] lg:mx-0"
+            <p style={{ "--surge-delay": "0.16s" }} className="surge mx-auto mt-7 max-w-[540px] text-[15.5px] leading-relaxed text-mute-soft sm:text-[17px] lg:mx-0"
             >
               Uma formação prática para desenvolver conhecimentos técnicos, profissionais e preparar você
               para os desafios do mercado de trabalho.
-            </motion.p>
+            </p>
 
             {/* Linha de destaque */}
-            <motion.div
-              {...rise(0.24)}
-              className="mt-7 flex flex-wrap justify-center gap-2 sm:gap-2.5 lg:justify-start"
+            <div style={{ "--surge-delay": "0.24s" }} className="surge mt-7 flex flex-wrap justify-center gap-2 sm:gap-2.5 lg:justify-start"
             >
               {badges.map(({ icon: Icon, label }) => (
                 <span
@@ -93,12 +79,10 @@ export default function Hero({ onCta }) {
                   {label}
                 </span>
               ))}
-            </motion.div>
+            </div>
 
             {/* CTAs */}
-            <motion.div
-              {...rise(0.32)}
-              className="mt-9 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-center lg:justify-start"
+            <div style={{ "--surge-delay": "0.32s" }} className="surge mt-9 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-center lg:justify-start"
             >
               <button
                 onClick={onCta}
@@ -114,15 +98,13 @@ export default function Hero({ onCta }) {
                 Conhecer o programa
                 <ArrowDown size={16} strokeWidth={2.4} className="text-blue" />
               </a>
-            </motion.div>
+            </div>
           </div>
 
           {/* ---------------- COLUNA DIREITA — IMAGEM ---------------- */}
-          <motion.div
-            initial={reduced ? false : { opacity: 0, scale: 0.96 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.85, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-            className="relative mx-auto w-full max-w-[420px] lg:max-w-none"
+          <div
+            style={{ "--surge-delay": "0.2s" }}
+            className="surge-escala relative mx-auto w-full max-w-[420px] lg:max-w-none"
           >
             {/* Moldura luminosa */}
             <div className="relative">
@@ -130,18 +112,19 @@ export default function Hero({ onCta }) {
                 aria-hidden
                 className="absolute -inset-3 rounded-[32px] bg-gradient-to-tr from-blue/35 via-violet/25 to-lime/25 opacity-60 blur-2xl"
               />
-
-              {/*
-                IMAGEM DO HERO — substitua por outra foto em /public/assets/hero-jovem.png
-                mantendo proporção retrato (~4:5).
-              */}
               <div className="edge relative overflow-hidden rounded-[26px] border border-line bg-panel">
+                {/*
+                  IMAGEM DO HERO — para trocar, gere as duas larguras em WebP
+                  (480 e 900px) mantendo proporção retrato (~4:5).
+                */}
                 <img
-                  src="/assets/hero-jovem.png"
+                  src="/assets/hero-jovem-900.webp"
+                  srcSet="/assets/hero-jovem-480.webp 480w, /assets/hero-jovem-900.webp 900w"
+                  sizes="(max-width: 1023px) 92vw, 500px"
                   alt="Jovem sorrindo em ambiente de tecnologia"
                   className="aspect-[4/5] w-full object-cover object-top"
-                  width="804"
-                  height="1035"
+                  width="900"
+                  height="1159"
                   fetchpriority="high"
                 />
                 <div
@@ -184,7 +167,7 @@ export default function Hero({ onCta }) {
                 </p>
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
       </Container>
     </section>

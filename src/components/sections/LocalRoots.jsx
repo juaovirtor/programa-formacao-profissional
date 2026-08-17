@@ -6,10 +6,10 @@ import { local } from "../../data/program";
 
 export default function LocalRoots() {
   return (
-    <section className="relative overflow-hidden py-16 sm:py-24">
+    <section className="secao-adiada relative overflow-hidden py-16 sm:py-24">
       <div aria-hidden className="absolute inset-0 -z-10">
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-lime/40 to-transparent" />
-        <div className="absolute left-1/2 top-0 h-[320px] w-[560px] -translate-x-1/2 rounded-full bg-lime/[0.06] blur-[120px]" />
+        <div className="absolute left-1/2 top-0 h-[320px] w-[560px] -translate-x-1/2 rounded-full bg-lime/[0.06] blur-[55px] sm:blur-[120px]" />
       </div>
 
       <Container>

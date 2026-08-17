@@ -33,15 +33,15 @@ export default function Header({ onCta }) {
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
         scrolled
-          ? "border-b border-line-soft bg-void/85 backdrop-blur-xl"
+          ? "border-b border-line-soft bg-void/95 sm:bg-void/85 sm:backdrop-blur-xl"
           : "border-b border-transparent bg-transparent"
       }`}
     >
       <Container className="flex h-[68px] items-center justify-between gap-4 sm:h-[76px]">
-        {/* LOGO DO GRUPO — /public/assets/logo-grupo-phoenix.png */}
+        {/* LOGO DO GRUPO — /public/assets/logo-grupo-phoenix.webp */}
         <a href="#topo" className="flex shrink-0 items-center" aria-label="Group Phoenix — página inicial">
           <img
-            src="/assets/logo-grupo-phoenix.png"
+            src="/assets/logo-grupo-phoenix.webp"
             alt="Group Phoenix"
             className="h-7 w-auto sm:h-8"
             width="121"
@@ -92,7 +92,7 @@ export default function Header({ onCta }) {
       </Container>
 
       <div
-        className={`overflow-hidden border-t bg-deep/97 backdrop-blur-xl transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] lg:hidden ${
+        className={`overflow-hidden border-t bg-deep/98 sm:backdrop-blur-xl transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] lg:hidden ${
           open ? "max-h-[360px] border-line-soft opacity-100" : "max-h-0 border-transparent opacity-0"
         }`}
       >

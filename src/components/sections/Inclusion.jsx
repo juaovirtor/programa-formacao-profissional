@@ -7,7 +7,7 @@ import { inclusao } from "../../data/program";
 
 export default function Inclusion() {
   return (
-    <section className="relative overflow-hidden py-16 sm:py-24">
+    <section className="secao-adiada relative overflow-hidden py-16 sm:py-24">
       <div aria-hidden className="absolute inset-0 -z-10">
         <div className="absolute inset-0 bg-[radial-gradient(85%_65%_at_20%_40%,rgba(200,245,50,0.07),transparent_60%),radial-gradient(70%_60%_at_85%_60%,rgba(139,92,246,0.14),transparent_60%)]" />
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-lime/40 to-transparent" />
