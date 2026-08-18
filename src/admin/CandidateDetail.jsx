@@ -1,10 +1,23 @@
 import { useEffect, useState } from "react";
-import { AlertCircle, Check, FileText, Mail, MessageCircle, Phone, ShieldCheck, X } from "lucide-react";
+import {
+  AlertCircle,
+  Check,
+  FileText,
+  Mail,
+  MessageCircle,
+  Phone,
+  ShieldCheck,
+  Trash2,
+  X,
+} from "lucide-react";
 import { atualizarInscricao, withToken } from "../lib/adminApi";
 import Foto from "./Foto";
 import { STATUS, STATUS_ORDER, formatarData, formatarTelefone, linkEmail, linkWhatsApp } from "./status";
 
-export default function CandidateDetail({ candidato, onFechar, onAtualizar }) {
+export default function CandidateDetail({ candidato, onFechar, onAtualizar, onExcluir }) {
+  // Registro excluído é histórico: pode ser consultado à vontade, mas não
+  // aceita mais edição — a API recusa qualquer alteração nele.
+  const excluida = Boolean(candidato.excluida);
   const [erro, setErro] = useState("");
   const [observacoes, setObservacoes] = useState(candidato.observacoes ?? "");
   const [salvo, setSalvo] = useState(false);
@@ -83,6 +96,36 @@ export default function CandidateDetail({ candidato, onFechar, onAtualizar }) {
         </header>
 
         <div className="space-y-7 px-5 py-6 sm:px-7">
+          {/* Auditoria da exclusão: quando, por quê e por quem. */}
+          {excluida && (
+            <section className="rounded-2xl border border-red-400/40 bg-red-500/[0.08] px-4 py-4 sm:px-5">
+              <h3 className="flex items-center gap-2 font-display text-[11px] font-semibold uppercase tracking-[0.18em] text-red-300">
+                <Trash2 size={13} />
+                Inscrição excluída
+              </h3>
+              <dl className="mt-3 space-y-2.5 text-[13px]">
+                <div>
+                  <dt className="text-[11px] uppercase tracking-[0.14em] text-mute">Data da exclusão</dt>
+                  <dd className="mt-0.5 text-white">{formatarData(candidato.exclusao?.em)}</dd>
+                </div>
+                <div>
+                  <dt className="text-[11px] uppercase tracking-[0.14em] text-mute">Motivo</dt>
+                  <dd className="mt-0.5 whitespace-pre-wrap break-words text-white">
+                    {candidato.exclusao?.motivo || "—"}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-[11px] uppercase tracking-[0.14em] text-mute">Excluída por</dt>
+                  <dd className="mt-0.5 text-white">{candidato.exclusao?.por || "Não identificado"}</dd>
+                </div>
+              </dl>
+              <p className="mt-3.5 text-[12px] leading-relaxed text-mute-soft">
+                Nenhum dado foi apagado: os dados do candidato, a foto e o currículo continuam
+                guardados. O registro fica somente para consulta.
+              </p>
+            </section>
+          )}
+
           {erro && (
             <p className="flex items-start gap-2 rounded-xl border border-red-400/40 bg-red-500/10 px-4 py-3 text-[13px] text-red-300">
               <AlertCircle size={15} className="mt-0.5 shrink-0" />
@@ -170,8 +213,11 @@ export default function CandidateDetail({ candidato, onFechar, onAtualizar }) {
                   <button
                     key={chave}
                     onClick={() => mudarStatus(chave)}
-                    className={`rounded-xl border px-3 py-3 text-[12.5px] font-medium transition-all ${
-                      ativo ? STATUS[chave].chip : "border-line bg-void/60 text-mute hover:border-blue/40 hover:text-white"
+                    disabled={excluida}
+                    className={`rounded-xl border px-3 py-3 text-[12.5px] font-medium transition-all disabled:cursor-not-allowed disabled:opacity-50 ${
+                      ativo
+                        ? STATUS[chave].chip
+                        : "border-line bg-void/60 text-mute enabled:hover:border-blue/40 enabled:hover:text-white"
                     }`}
                   >
                     {STATUS[chave].label}
@@ -190,12 +236,14 @@ export default function CandidateDetail({ candidato, onFechar, onAtualizar }) {
               rows={4}
               value={observacoes}
               onChange={(e) => setObservacoes(e.target.value)}
+              disabled={excluida}
               placeholder="Anotações da equipe sobre este candidato..."
-              className="field mt-3 resize-none"
+              className="field mt-3 resize-none disabled:cursor-not-allowed disabled:opacity-60"
             />
             <button
               onClick={salvarObservacoes}
-              className="mt-2.5 inline-flex items-center gap-2 rounded-full border border-line px-5 py-2.5 font-display text-[12px] font-semibold text-white transition-colors hover:border-lime/50 hover:bg-lime/10"
+              disabled={excluida}
+              className="mt-2.5 inline-flex items-center gap-2 rounded-full border border-line px-5 py-2.5 font-display text-[12px] font-semibold text-white transition-colors enabled:hover:border-lime/50 enabled:hover:bg-lime/10 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {salvo ? (
                 <>
@@ -207,6 +255,26 @@ export default function CandidateDetail({ candidato, onFechar, onAtualizar }) {
               )}
             </button>
           </section>
+
+          {/* Exclusão lógica — só para inscrições ativas. */}
+          {!excluida && onExcluir && (
+            <section className="border-t border-line pb-4 pt-6">
+              <h3 className="font-display text-[11px] font-semibold uppercase tracking-[0.18em] text-mute">
+                Excluir inscrição
+              </h3>
+              <p className="mt-2 text-[12.5px] leading-relaxed text-mute-soft">
+                A inscrição sai da lista ativa e passa para o histórico. Nada é apagado — os dados,
+                a foto e o currículo continuam guardados.
+              </p>
+              <button
+                onClick={onExcluir}
+                className="mt-3 inline-flex items-center gap-2 rounded-full border border-red-400/45 bg-red-500/10 px-5 py-2.5 font-display text-[12px] font-semibold text-red-300 transition-colors hover:bg-red-500/20"
+              >
+                <Trash2 size={14} />
+                Excluir inscrição
+              </button>
+            </section>
+          )}
         </div>
       </aside>
     </div>

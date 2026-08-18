@@ -60,7 +60,16 @@ export async function login(senha) {
   return data.token;
 }
 
-export const listarInscricoes = () => request("/api/admin/inscricoes");
+/** Por padrão traz só as ativas; `excluidas: true` traz só as excluídas. */
+export const listarInscricoes = ({ excluidas = false } = {}) =>
+  request(`/api/admin/inscricoes${excluidas ? "?excluidas=1" : ""}`);
 
 export const atualizarInscricao = (id, patch) =>
   request(`/api/admin/inscricoes/${id}`, { method: "PATCH", body: JSON.stringify(patch) });
+
+/**
+ * Exclusão lógica: marca a inscrição como excluída, sem apagar nada.
+ * O motivo é obrigatório e a API recusa a chamada sem ele.
+ */
+export const excluirInscricao = (id, motivo) =>
+  request(`/api/admin/inscricoes/${id}`, { method: "DELETE", body: JSON.stringify({ motivo }) });

@@ -3,15 +3,18 @@ import cors from "cors";
 import express from "express";
 import multer from "multer";
 
-import { checkPassword, createToken, requireAdmin } from "./lib/auth.js";
+import { checkPassword, createToken, identificacaoAdmin, requireAdmin } from "./lib/auth.js";
 import { supabaseConfigurado } from "./lib/supabase.js";
 import {
+  MOTIVO_MAX,
   STATUS,
   atualizarInscricao,
   criarInscricao,
+  excluirInscricao,
   listarInscricoes,
   obterInscricao,
 } from "./lib/inscricoes.js";
+import { notificarNovaInscricao, pendenciasDaNotificacao } from "./lib/notificacao.js";
 import { CURRICULO_MAX, FOTO_MAX, validarInscricao } from "./lib/validacao.js";
 
 const PORT = Number(process.env.PORT ?? 3001);
@@ -70,6 +73,11 @@ app.post("/api/inscricoes", camposArquivo, async (req, res) => {
 
   // Sucesso só chega aqui: arquivos no Storage e registro no banco, os dois.
   res.status(201).json({ ok: true, protocolo: resultado.protocolo });
+
+  // Aviso à equipe — depois da resposta, de propósito. Sem await e sem
+  // possibilidade de lançar: se o e-mail falhar, a inscrição continua válida
+  // e o erro fica registrado no log da API.
+  notificarNovaInscricao(resultado.inscricao);
 });
 
 /* ------------------------------------------------------------------ */
@@ -86,10 +94,16 @@ app.post("/api/admin/login", (req, res) => {
   res.json({ token: createToken() });
 });
 
-app.get("/api/admin/inscricoes", requireAdmin, async (_req, res, next) => {
+/**
+ * Lista as inscrições ATIVAS.
+ * `?excluidas=1` troca a lista pelas excluídas — nunca vêm as duas juntas.
+ */
+app.get("/api/admin/inscricoes", requireAdmin, async (req, res, next) => {
+  const excluidas = req.query.excluidas === "1" || req.query.excluidas === "true";
   try {
-    const inscricoes = await listarInscricoes();
+    const inscricoes = await listarInscricoes({ excluidas });
     res.json({
+      excluidas,
       inscricoes,
       resumo: {
         total: inscricoes.length,
@@ -130,7 +144,39 @@ app.patch("/api/admin/inscricoes/:id", requireAdmin, async (req, res, next) => {
 
   try {
     const inscricao = await atualizarInscricao(req.params.id, patch);
-    if (!inscricao) return res.status(404).json({ error: "Inscrição não encontrada." });
+    if (!inscricao) {
+      // Também cai aqui quando a inscrição existe mas está excluída:
+      // registro excluído é histórico e não aceita mais edição.
+      return res.status(404).json({ error: "Inscrição não encontrada ou já excluída." });
+    }
+    res.json(inscricao);
+  } catch (err) {
+    next(err);
+  }
+});
+
+/**
+ * Exclusão LÓGICA. Não existe DELETE físico em lugar nenhum desta API:
+ * o registro continua no banco e os arquivos continuam no Storage.
+ * O motivo é obrigatório — é ele que sustenta a auditoria.
+ */
+app.delete("/api/admin/inscricoes/:id", requireAdmin, async (req, res, next) => {
+  const motivo = String(req.body?.motivo ?? "").trim();
+  if (motivo.length < 3) {
+    return res.status(400).json({ error: "Informe o motivo da exclusão." });
+  }
+  if (motivo.length > MOTIVO_MAX) {
+    return res.status(400).json({ error: `O motivo deve ter no máximo ${MOTIVO_MAX} caracteres.` });
+  }
+
+  try {
+    const inscricao = await excluirInscricao(req.params.id, {
+      motivo,
+      por: identificacaoAdmin(),
+    });
+    if (!inscricao) {
+      return res.status(404).json({ error: "Inscrição não encontrada ou já excluída." });
+    }
     res.json(inscricao);
   } catch (err) {
     next(err);
@@ -158,5 +204,14 @@ app.listen(PORT, () => {
     console.warn(
       "⚠  SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY não definidas — as inscrições serão recusadas.",
     );
+  }
+  const pendencias = pendenciasDaNotificacao();
+  if (pendencias.length > 0) {
+    console.warn(
+      `⚠  Aviso por e-mail desligado — falta configurar: ${pendencias.join(", ")}. ` +
+        "As inscrições continuam funcionando normalmente.",
+    );
+  } else {
+    console.log(`✓ Aviso de nova inscrição por e-mail ativo (${process.env.EMAIL_PROVIDER}).`);
   }
 });

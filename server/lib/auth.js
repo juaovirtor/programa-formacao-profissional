@@ -43,6 +43,18 @@ export function checkPassword(senha) {
   return timingSafeEqual(a, b);
 }
 
+/**
+ * Quem está operando o painel.
+ *
+ * O acesso é por senha única compartilhada, então não há como distinguir uma
+ * pessoa da outra pelo token. Esta é a melhor identificação disponível hoje:
+ * o nome definido em ADMIN_NOME, ou "admin" quando não houver nenhum.
+ * É o valor gravado em `deleted_by` na exclusão lógica.
+ */
+export function identificacaoAdmin() {
+  return process.env.ADMIN_NOME?.trim() || "admin";
+}
+
 /** Middleware: exige Authorization: Bearer <token>. */
 export function requireAdmin(req, res, next) {
   const header = req.headers.authorization ?? "";

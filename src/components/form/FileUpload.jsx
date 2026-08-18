@@ -1,11 +1,16 @@
 import { useEffect, useRef, useState } from "react";
-import { Camera, Check, FileText, Trash2, Upload } from "lucide-react";
+import { Camera, Check, FileText, Loader2, Trash2, Upload, Wand2 } from "lucide-react";
 import { formatFileSize } from "../../lib/validation";
 
 /**
  * Upload com clique ou arrastar-e-soltar.
  * variant="photo"  → mostra preview circular da imagem
  * variant="pdf"    → mostra nome e tamanho do arquivo
+ *
+ * `processar` (opcional): função assíncrona que recebe o arquivo escolhido e
+ * devolve `{ file, info }`. É por aqui que a foto do candidato é otimizada no
+ * navegador antes de virar estado do formulário — quem sobe é sempre o
+ * arquivo devolvido, nunca o original.
  */
 export default function FileUpload({
   id,
@@ -16,10 +21,17 @@ export default function FileUpload({
   onSelect,
   title,
   subtitle,
+  processar,
+  aoProcessar,
 }) {
   const inputRef = useRef(null);
   const [dragging, setDragging] = useState(false);
   const [preview, setPreview] = useState(null);
+  const [processando, setProcessando] = useState(false);
+  const [info, setInfo] = useState(null);
+  // Sequência: se a pessoa trocar de foto no meio do processamento, o
+  // resultado da anterior é descartado em vez de sobrescrever o mais novo.
+  const sequencia = useRef(0);
 
   useEffect(() => {
     if (variant !== "photo" || !file || !file.type?.startsWith("image/")) {
@@ -31,13 +43,42 @@ export default function FileUpload({
     return () => URL.revokeObjectURL(url);
   }, [file, variant]);
 
-  const pick = (selected) => {
-    if (selected) onSelect(selected);
+  const pick = async (selected) => {
+    if (!selected) return;
+
+    if (!processar) {
+      onSelect(selected);
+      return;
+    }
+
+    const meu = (sequencia.current += 1);
+    setProcessando(true);
+    setInfo(null);
+    aoProcessar?.({ processando: true, erro: "" });
+
+    try {
+      const { file: pronto, info: resumo } = await processar(selected);
+      if (meu !== sequencia.current) return; // chegou atrasado: ignora
+      setInfo(resumo);
+      onSelect(pronto);
+      aoProcessar?.({ processando: false, erro: "" });
+    } catch (err) {
+      if (meu !== sequencia.current) return;
+      setInfo(null);
+      onSelect(null);
+      aoProcessar?.({ processando: false, erro: err.message });
+    } finally {
+      if (meu === sequencia.current) setProcessando(false);
+    }
   };
 
   const clear = (e) => {
     e.stopPropagation();
+    sequencia.current += 1;
+    setProcessando(false);
+    setInfo(null);
     onSelect(null);
+    aoProcessar?.({ processando: false, erro: "" });
     if (inputRef.current) inputRef.current.value = "";
   };
 
@@ -57,8 +98,10 @@ export default function FileUpload({
       <div
         role="button"
         tabIndex={0}
-        onClick={() => inputRef.current?.click()}
+        aria-busy={processando}
+        onClick={() => !processando && inputRef.current?.click()}
         onKeyDown={(e) => {
+          if (processando) return;
           if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
             inputRef.current?.click();
@@ -92,7 +135,9 @@ export default function FileUpload({
               : "h-14 w-14 rounded-xl border"
           } ${filled ? "border-lime/60 bg-lime/10" : "border-line bg-white/[0.03]"}`}
         >
-          {preview ? (
+          {processando ? (
+            <Loader2 size={20} strokeWidth={2.2} className="animate-spin text-blue" />
+          ) : preview ? (
             <img src={preview} alt="Pré-visualização da foto" className="h-full w-full object-cover" />
           ) : variant === "photo" ? (
             <Camera size={20} strokeWidth={1.9} className={filled ? "text-lime" : "text-blue"} />
@@ -105,14 +150,35 @@ export default function FileUpload({
 
         {/* Texto */}
         <div className="min-w-0 flex-1">
-          {filled ? (
+          {processando ? (
+            <>
+              <p className="flex items-center gap-1.5 font-display text-[13.5px] font-semibold text-blue-soft">
+                <Wand2 size={14} strokeWidth={2.4} />
+                Otimizando sua foto...
+              </p>
+              <p className="mt-1 text-[12.5px] leading-relaxed text-mute">
+                Reduzindo o tamanho para o envio ficar rápido. Leva só um instante.
+              </p>
+            </>
+          ) : filled ? (
             <>
               <p className="flex items-center gap-1.5 font-display text-[13.5px] font-semibold text-lime">
                 <Check size={14} strokeWidth={3} />
                 Arquivo selecionado
               </p>
               <p className="mt-1 truncate text-[13px] text-white/90">{file.name}</p>
-              <p className="mt-0.5 text-[11.5px] text-mute">{formatFileSize(file.size)} · toque para trocar</p>
+              <p className="mt-0.5 text-[11.5px] text-mute">
+                {formatFileSize(file.size)} · toque para trocar
+              </p>
+              {info?.otimizada && (
+                <p className="mt-1 flex flex-wrap items-center gap-1 text-[11.5px] text-blue-soft">
+                  <Wand2 size={12} strokeWidth={2.4} className="shrink-0" />
+                  Otimizada: {formatFileSize(info.tamanhoOriginal)} → {formatFileSize(info.tamanhoFinal)}
+                  <span className="text-mute">
+                    ({info.largura}×{info.altura}px)
+                  </span>
+                </p>
+              )}
             </>
           ) : (
             <>
@@ -122,7 +188,7 @@ export default function FileUpload({
           )}
         </div>
 
-        {filled && (
+        {filled && !processando && (
           <button
             type="button"
             onClick={clear}

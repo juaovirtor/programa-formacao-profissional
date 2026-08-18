@@ -1,7 +1,20 @@
 /** Regras de validação e formatação do formulário de inscrição. */
 
 export const PHOTO_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
-export const PHOTO_MAX_MB = 5;
+
+/**
+ * Limite da foto DEPOIS da otimização no navegador (ver src/lib/imagem.js).
+ * A foto que o candidato escolhe pode ser bem maior: ela é redimensionada e
+ * recomprimida antes de chegar aqui, e quase sempre fica abaixo de 1 MB.
+ */
+export const PHOTO_MAX_MB = 4;
+
+/**
+ * Teto do arquivo ORIGINAL, só para não tentar decodificar algo absurdo e
+ * travar o celular. Uma foto de 48 MP em RAW passa disto; de galeria, não.
+ */
+export const PHOTO_INPUT_MAX_MB = 30;
+
 export const CV_MAX_MB = 10;
 
 /** Máscara de telefone brasileiro: (42) 99978-7068 */
@@ -34,10 +47,29 @@ export function validateEmail(value) {
   return "";
 }
 
+/**
+ * Valida a foto que vai ser ENVIADA — ou seja, a versão já otimizada.
+ * A checagem de tamanho acontece depois da compressão, de propósito: é o
+ * arquivo final que precisa caber no limite, não o que saiu da câmera.
+ */
 export function validateFoto(file) {
   if (!file) return "Envie uma foto para continuar.";
   if (!PHOTO_TYPES.includes(file.type)) return "A foto precisa ser JPG, PNG ou WEBP.";
-  if (file.size > PHOTO_MAX_MB * 1024 * 1024) return `A foto deve ter no máximo ${PHOTO_MAX_MB}MB.`;
+  if (file.size > PHOTO_MAX_MB * 1024 * 1024) {
+    return (
+      `Mesmo depois de otimizada, a foto ficou com ${formatFileSize(file.size)} — ` +
+      `o limite é ${PHOTO_MAX_MB}MB. Tente enviar outra foto.`
+    );
+  }
+  return "";
+}
+
+/** Barreira aplicada ao arquivo original, antes de tentar processá-lo. */
+export function validateFotoOriginal(file) {
+  if (!file) return "Envie uma foto para continuar.";
+  if (file.size > PHOTO_INPUT_MAX_MB * 1024 * 1024) {
+    return `Esta foto tem ${formatFileSize(file.size)}. Escolha uma foto de até ${PHOTO_INPUT_MAX_MB}MB.`;
+  }
   return "";
 }
 

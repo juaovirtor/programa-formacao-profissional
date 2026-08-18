@@ -48,6 +48,13 @@ create table if not exists public.inscricoes (
                         check (status in ('novo', 'em_analise', 'selecionado', 'nao_selecionado')),
   observacoes           text not null default '',
 
+  -- Exclusão lógica. Nada é apagado: a inscrição sai da lista ativa mas
+  -- o candidato, a foto e o currículo continuam no lugar, com o registro
+  -- de quando, por quê e por quem foi excluída.
+  deleted_at            timestamptz,
+  deleted_reason        text,
+  deleted_by            text,
+
   created_at            timestamptz not null default now(),
   updated_at            timestamptz not null default now()
 );
@@ -61,13 +68,21 @@ comment on table public.inscricoes is
 create index if not exists inscricoes_created_at_idx on public.inscricoes (created_at desc);
 create index if not exists inscricoes_status_idx     on public.inscricoes (status);
 
+-- A listagem padrão do painel mostra só as ativas, ordenadas por data.
+create index if not exists inscricoes_ativas_idx
+  on public.inscricoes (created_at desc)
+  where deleted_at is null;
+
 -- ---------------------------------------------------------------------
--- E-mail único, ignorando maiúsculas/minúsculas.
+-- E-mail único entre as inscrições ATIVAS, ignorando maiúsculas/minúsculas.
 --
 -- É o índice em lower(email) que garante a regra: joao@email.com e
 -- JOAO@EMAIL.COM contam como o mesmo e-mail. A API também confere antes
 -- de subir os arquivos, mas quem realmente impede a duplicata é o banco —
 -- inclusive se dois envios chegarem ao mesmo tempo.
+--
+-- O "where deleted_at is null" existe por causa da exclusão lógica: uma
+-- inscrição excluída não deve bloquear o e-mail para sempre.
 --
 -- Se este comando falhar com "could not create unique index", já existem
 -- e-mails repetidos na tabela. Rode a consulta abaixo para encontrá-los,
@@ -75,11 +90,14 @@ create index if not exists inscricoes_status_idx     on public.inscricoes (statu
 --
 --   select lower(email) as email, count(*), array_agg(protocolo)
 --   from public.inscricoes
+--   where deleted_at is null
 --   group by lower(email) having count(*) > 1;
 -- ---------------------------------------------------------------------
 drop index if exists public.inscricoes_email_idx;
-create unique index if not exists inscricoes_email_unico_idx
-  on public.inscricoes (lower(email));
+drop index if exists public.inscricoes_email_unico_idx;
+create unique index if not exists inscricoes_email_unico_ativas_idx
+  on public.inscricoes (lower(email))
+  where deleted_at is null;
 
 -- ---------------------------------------------------------------------
 -- updated_at automático

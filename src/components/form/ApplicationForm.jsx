@@ -10,12 +10,14 @@ import StepIndicator, { STEPS } from "./StepIndicator";
 import SuccessModal from "./SuccessModal";
 import { originOptions, privacidade } from "../../data/program";
 import { submitApplication } from "../../lib/api";
+import { otimizarFoto } from "../../lib/imagem";
 import {
   maskPhone,
   validateConsentimento,
   validateCurriculo,
   validateEmail,
   validateFoto,
+  validateFotoOriginal,
   validateNome,
   validateOrigem,
   validateTelefone,
@@ -47,7 +49,24 @@ export default function ApplicationForm() {
   const [submitError, setSubmitError] = useState("");
   const [success, setSuccess] = useState(null); // { protocolo }
   const [avisoAberto, setAvisoAberto] = useState(false);
+  const [fotoProcessando, setFotoProcessando] = useState(false);
   const cardRef = useRef(null);
+
+  /**
+   * Prepara a foto ANTES de virar estado do formulário: confere o tamanho do
+   * arquivo original e devolve a versão redimensionada e comprimida. É esta
+   * versão que segue para o FormData — a original nunca sai do aparelho.
+   */
+  const prepararFoto = async (arquivo) => {
+    const problema = validateFotoOriginal(arquivo);
+    if (problema) throw new Error(problema);
+    return otimizarFoto(arquivo);
+  };
+
+  const aoProcessarFoto = ({ processando, erro }) => {
+    setFotoProcessando(processando);
+    setErrors((prev) => (prev.foto === erro ? prev : { ...prev, foto: erro }));
+  };
 
   const set = (key, value) => {
     setData((prev) => ({ ...prev, [key]: value }));
@@ -85,6 +104,9 @@ export default function ApplicationForm() {
   };
 
   const next = () => {
+    // Não deixa passar da etapa da foto enquanto ela ainda está sendo
+    // otimizada: nesse instante `data.foto` ainda é nulo.
+    if (fotoProcessando) return;
     if (!validateStep(step)) return;
     setStep((s) => Math.min(s + 1, STEPS.length - 1));
     scrollToCard();
@@ -224,15 +246,23 @@ export default function ApplicationForm() {
                 {step === 1 && (
                   <div className="space-y-5">
                     <Field label="Foto" htmlFor="foto" error={errors.foto}>
+                      {/*
+                        accept="image/*" de propósito: no celular é o que abre
+                        a galeria inteira e deixa o iPhone converter HEIC em
+                        JPEG sozinho. O que não der para processar é barrado
+                        depois, com mensagem explicando o motivo.
+                      */}
                       <FileUpload
                         id="foto"
                         variant="photo"
-                        accept="image/jpeg,image/png,image/webp"
+                        accept="image/*"
                         file={data.foto}
                         error={errors.foto}
                         onSelect={(file) => set("foto", file)}
+                        processar={prepararFoto}
+                        aoProcessar={aoProcessarFoto}
                         title="Enviar minha foto"
-                        subtitle="JPG, PNG ou WEBP · até 5MB"
+                        subtitle="Foto do celular serve · reduzimos o tamanho para você"
                       />
                     </Field>
 
@@ -410,10 +440,24 @@ export default function ApplicationForm() {
                   <button
                     type="button"
                     onClick={next}
-                    className="btn-shine group inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-blue-deep via-blue to-violet px-8 py-4 font-display text-[13.5px] font-bold uppercase tracking-[0.08em] text-white shadow-[0_14px_40px_-14px_rgba(43,140,255,0.9)] transition-transform duration-300 hover:-translate-y-0.5"
+                    disabled={fotoProcessando}
+                    className="btn-shine group inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-blue-deep via-blue to-violet px-8 py-4 font-display text-[13.5px] font-bold uppercase tracking-[0.08em] text-white shadow-[0_14px_40px_-14px_rgba(43,140,255,0.9)] transition-transform duration-300 hover:-translate-y-0.5 disabled:translate-y-0 disabled:opacity-60"
                   >
-                    Continuar
-                    <ArrowRight size={17} strokeWidth={2.8} className="transition-transform group-hover:translate-x-1" />
+                    {fotoProcessando ? (
+                      <>
+                        <Loader2 size={16} strokeWidth={2.6} className="animate-spin" />
+                        Preparando a foto...
+                      </>
+                    ) : (
+                      <>
+                        Continuar
+                        <ArrowRight
+                          size={17}
+                          strokeWidth={2.8}
+                          className="transition-transform group-hover:translate-x-1"
+                        />
+                      </>
+                    )}
                   </button>
                 ) : (
                   <button

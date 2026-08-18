@@ -35,7 +35,14 @@ export const MENSAGEM_EMAIL_DUPLICADO =
  */
 async function emailJaInscrito(email) {
   const supabase = getSupabase();
-  const { data, error } = await supabase.from(TABELA).select("id").eq("email", email).limit(1);
+  const { data, error } = await supabase
+    .from(TABELA)
+    .select("id")
+    .eq("email", email)
+    // Só inscrições ativas bloqueiam. Uma inscrição excluída não impede que
+    // a pessoa se inscreva de novo — é a mesma regra do índice único parcial.
+    .is("deleted_at", null)
+    .limit(1);
 
   if (error) {
     // Não dá para afirmar que está livre: deixa o índice único decidir no insert.
@@ -48,7 +55,8 @@ async function emailJaInscrito(email) {
 const COLUNAS =
   "id, protocolo, nome_completo, telefone, email, foto_path, curriculo_path, " +
   "origem, origem_outro, consentimento_aceito, consentimento_em, consentimento_texto, " +
-  "status, observacoes, created_at, updated_at";
+  "status, observacoes, created_at, updated_at, " +
+  "deleted_at, deleted_reason, deleted_by";
 
 /* ------------------------------------------------------------------ */
 /* Criação                                                             */
@@ -115,7 +123,8 @@ export async function criarInscricao({ dados, foto, curriculo }) {
   const { data, error } = await supabase
     .from(TABELA)
     .insert({ id, ...dados, foto_path: fotoPath, curriculo_path: curriculoPath })
-    .select("id, protocolo")
+    // Os campos extras alimentam o e-mail de aviso enviado logo depois.
+    .select("id, protocolo, nome_completo, email, telefone, created_at")
     .single();
 
   if (error) {
@@ -132,20 +141,43 @@ export async function criarInscricao({ dados, foto, curriculo }) {
     return { ok: false, erro: "Não conseguimos concluir sua inscrição. Tente novamente." };
   }
 
-  return { ok: true, id: data.id, protocolo: data.protocolo };
+  return {
+    ok: true,
+    id: data.id,
+    protocolo: data.protocolo,
+    inscricao: {
+      id: data.id,
+      protocolo: data.protocolo,
+      nome: data.nome_completo,
+      email: data.email,
+      telefone: data.telefone,
+      criadoEm: data.created_at,
+    },
+  };
 }
 
 /* ------------------------------------------------------------------ */
 /* Leitura                                                             */
 /* ------------------------------------------------------------------ */
 
-export async function listarInscricoes() {
+/**
+ * Lista as inscrições.
+ *
+ * Por padrão devolve só as ATIVAS. As excluídas continuam no banco e só
+ * aparecem quando pedidas explicitamente — nunca se misturam com a lista
+ * normal do painel.
+ *
+ * @param {{excluidas?: boolean}} opcoes  excluidas: true → só as excluídas
+ */
+export async function listarInscricoes({ excluidas = false } = {}) {
   const supabase = getSupabase();
-  const { data, error } = await supabase
-    .from(TABELA)
-    .select(COLUNAS)
-    .order("created_at", { ascending: false });
 
+  let consulta = supabase.from(TABELA).select(COLUNAS);
+  consulta = excluidas
+    ? consulta.not("deleted_at", "is", null).order("deleted_at", { ascending: false })
+    : consulta.is("deleted_at", null).order("created_at", { ascending: false });
+
+  const { data, error } = await consulta;
   if (error) throw error;
 
   const links = await gerarLinks(data ?? []);
@@ -163,12 +195,56 @@ export async function obterInscricao(id) {
   return paraPublico(data, links);
 }
 
+/**
+ * Muda status/observações. Só age sobre inscrições ativas: um registro
+ * excluído é histórico e não deve mais ser editado.
+ */
 export async function atualizarInscricao(id, patch) {
   const supabase = getSupabase();
   const { data, error } = await supabase
     .from(TABELA)
     .update(patch)
     .eq("id", id)
+    .is("deleted_at", null)
+    .select(COLUNAS)
+    .maybeSingle();
+
+  if (error) throw error;
+  if (!data) return null;
+
+  const links = await gerarLinks([data]);
+  return paraPublico(data, links);
+}
+
+/* ------------------------------------------------------------------ */
+/* Exclusão lógica                                                     */
+/* ------------------------------------------------------------------ */
+
+/** Tamanho máximo guardado do motivo da exclusão. */
+export const MOTIVO_MAX = 500;
+
+/**
+ * Marca a inscrição como excluída. NADA é apagado:
+ * a linha continua no banco e a foto e o currículo continuam no Storage.
+ * A exclusão é só o preenchimento dos três campos de auditoria.
+ *
+ * @param {string} id
+ * @param {{motivo: string, por: string}} dados
+ * @returns {Promise<object|null>}  null quando não existe ou já estava excluída
+ */
+export async function excluirInscricao(id, { motivo, por }) {
+  const supabase = getSupabase();
+
+  const { data, error } = await supabase
+    .from(TABELA)
+    .update({
+      deleted_at: new Date().toISOString(),
+      deleted_reason: String(motivo).trim().slice(0, MOTIVO_MAX),
+      deleted_by: por,
+    })
+    .eq("id", id)
+    // Evita sobrescrever a auditoria de uma exclusão anterior.
+    .is("deleted_at", null)
     .select(COLUNAS)
     .maybeSingle();
 
@@ -232,8 +308,18 @@ function paraPublico(row, links) {
       em: row.consentimento_em,
       texto: row.consentimento_texto ?? "",
     },
+    // Os arquivos continuam acessíveis mesmo depois da exclusão lógica —
+    // é justamente disso que o histórico depende.
     fotoUrl: links[row.foto_path] ?? null,
     curriculoUrl: links[row.curriculo_path] ?? null,
     curriculoNome: `curriculo-${row.protocolo}.pdf`,
+    excluida: Boolean(row.deleted_at),
+    exclusao: row.deleted_at
+      ? {
+          em: row.deleted_at,
+          motivo: row.deleted_reason ?? "",
+          por: row.deleted_by ?? "",
+        }
+      : null,
   };
 }

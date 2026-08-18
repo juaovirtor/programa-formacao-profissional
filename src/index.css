@@ -250,42 +250,54 @@ label {
   animation: halo 1.8s ease-out infinite;
 }
 
-/* Campos de formulário */
-.field {
-  width: 100%;
-  border-radius: 14px;
-  border: 1px solid var(--color-line);
-  background: rgba(7, 11, 22, 0.72);
-  padding: 15px 16px;
-  font-size: 16px; /* evita zoom automático no iOS */
-  color: #fff;
-  outline: none;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
-}
-.field::placeholder {
-  color: #59708f;
-}
-.field:focus {
-  border-color: rgba(43, 140, 255, 0.75);
-  box-shadow: 0 0 0 4px rgba(43, 140, 255, 0.14);
-  background: rgba(11, 17, 32, 0.9);
-}
-.field-error {
-  border-color: rgba(248, 113, 113, 0.8) !important;
-  box-shadow: 0 0 0 4px rgba(248, 113, 113, 0.12) !important;
-}
+/* ------------------------------------------------------------------
+   Campos de formulário
 
-select.field {
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238ea0bd' stroke-width='2.2' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 14px center;
-  background-size: 18px;
-  padding-right: 44px;
-}
-select.field option {
-  background: #0b1120;
-  color: #fff;
+   Estas regras ficam em @layer components de propósito. O Tailwind põe as
+   utilidades em @layer utilities, e uma regra SEM camada sempre vence uma
+   regra COM camada, por mais específica que ela seja. Fora da camada, o
+   `padding` abaixo anulava utilidades como `pl-11` — era o que fazia o
+   texto passar por baixo dos ícones de cadeado e de lupa no painel.
+   Dentro da camada, as utilidades voltam a poder ajustar o campo.
+   ------------------------------------------------------------------ */
+@layer components {
+  .field {
+    width: 100%;
+    border-radius: 14px;
+    border: 1px solid var(--color-line);
+    background: rgba(7, 11, 22, 0.72);
+    padding: 15px 16px;
+    font-size: 16px; /* evita zoom automático no iOS */
+    color: #fff;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  }
+  .field::placeholder {
+    color: #59708f;
+  }
+  .field:focus {
+    border-color: rgba(43, 140, 255, 0.75);
+    box-shadow: 0 0 0 4px rgba(43, 140, 255, 0.14);
+    background: rgba(11, 17, 32, 0.9);
+  }
+  /* !important para a borda de erro continuar visível com o campo em foco. */
+  .field-error {
+    border-color: rgba(248, 113, 113, 0.8) !important;
+    box-shadow: 0 0 0 4px rgba(248, 113, 113, 0.12) !important;
+  }
+
+  select.field {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238ea0bd' stroke-width='2.2' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    background-size: 18px;
+    padding-right: 44px;
+  }
+  select.field option {
+    background: #0b1120;
+    color: #fff;
+  }
 }
 
 /* ============================================================
