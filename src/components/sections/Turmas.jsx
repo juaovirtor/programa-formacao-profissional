@@ -2,17 +2,17 @@ import Container from "../ui/Container";
 import Reveal from "../ui/Reveal";
 import Eyebrow from "../ui/Eyebrow";
 import Foto from "../ui/Foto";
-import { primeiraTurma } from "../../data/program";
-import { fotosPrimeiraTurma } from "../../data/fotos";
+import { turmas } from "../../data/program";
+import { fotosTurmas } from "../../data/fotos";
 import { fotosVisiveis, mostrarEspacos } from "../../lib/espacos";
 
-export default function PrimeiraTurma() {
-  const principal = fotosVisiveis([fotosPrimeiraTurma.principal])[0];
-  const extras = fotosVisiveis(fotosPrimeiraTurma.extras);
-  const depoimentos = primeiraTurma.depoimentos;
+export default function Turmas() {
+  const principal = fotosVisiveis([fotosTurmas.principal])[0];
+  const extras = fotosVisiveis(fotosTurmas.extras);
+  const depoimentos = turmas.depoimentos;
 
   return (
-    // A âncora "Primeira turma" do menu aponta para cá (esta seção sempre existe;
+    // A âncora "Nossas turmas" do menu aponta para cá (esta seção sempre existe;
     // a galeria só aparece quando há fotos).
     <section id="turma" className="secao-adiada scroll-mt-20 py-20 sm:py-28">
       <Container>
@@ -24,11 +24,11 @@ export default function PrimeiraTurma() {
           )}
 
           <Reveal delay={0.08} className={principal ? "" : "max-w-[720px]"}>
-            <Eyebrow tone="lime">Nossa primeira turma</Eyebrow>
+            <Eyebrow tone="lime">Nossas turmas</Eyebrow>
             <h2 className="mt-5 font-display text-[28px] font-extrabold uppercase leading-[1.04] tracking-[-0.02em] sm:text-[38px] lg:text-[42px]">
-              {primeiraTurma.titulo} <span className="text-gradient-blue">{primeiraTurma.destaque}</span>
+              {turmas.titulo} <span className="text-gradient-blue">{turmas.destaque}</span>
             </h2>
-            <p className="mt-5 text-[15px] leading-relaxed text-mute-soft sm:text-[16.5px]">{primeiraTurma.texto}</p>
+            <p className="mt-5 text-[15px] leading-relaxed text-mute-soft sm:text-[16.5px]">{turmas.texto}</p>
 
             {extras.length > 0 && (
               <div className="mt-6 grid grid-cols-2 gap-3">

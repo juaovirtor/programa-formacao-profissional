@@ -9,7 +9,7 @@ import Historia from "./components/sections/Historia";
 import Formacao from "./components/sections/Formacao";
 import Galeria from "./components/sections/Galeria";
 import Convidados from "./components/sections/Convidados";
-import PrimeiraTurma from "./components/sections/PrimeiraTurma";
+import Turmas from "./components/sections/Turmas";
 import Certificacao from "./components/sections/Certificacao";
 import Instagram from "./components/sections/Instagram";
 import Compromisso from "./components/sections/Compromisso";
@@ -34,7 +34,7 @@ export default function App() {
         <Formacao />
         <Galeria />
         <Convidados />
-        <PrimeiraTurma />
+        <Turmas />
         <Certificacao />
         <ApplicationForm />
         <Instagram />

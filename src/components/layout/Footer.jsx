@@ -130,8 +130,9 @@ export default function Footer() {
               href={credito.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-medium text-mute-soft transition-colors hover:text-white"
+              className="inline-flex items-center gap-2 font-medium text-mute-soft transition-colors hover:text-white"
             >
+              {credito.logo && <img src={credito.logo} alt="" className="h-5 w-auto" loading="lazy" />}
               {credito.nome} · {credito.perfil}
             </a>
           </p>

@@ -46,7 +46,7 @@ export const galeria = [
   espaco("Entrega de certificados", { categoria: "Encerramento" }),
 ];
 
-export const fotosPrimeiraTurma = {
+export const fotosTurmas = {
   principal: espaco("Turma reunida no encerramento"),
   extras: [espaco("Aula"), espaco("Entrega de certificados")],
 };

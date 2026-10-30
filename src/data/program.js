@@ -24,7 +24,7 @@ export const marca = {
 export const nav = [
   { label: "O programa", href: "#historia" },
   { label: "Formação", href: "#formacao" },
-  { label: "Primeira turma", href: "#turma" },
+  { label: "Nossas turmas", href: "#turma" },
   { label: "Transparência", href: "#transparencia" },
 ];
 
@@ -58,13 +58,13 @@ export const historia = {
   destaque: "e sentia falta de algo.",
   paragrafos: [
     "Empresários da região percebiam a mesma coisa: jovens com vontade de trabalhar, mas ainda sem as habilidades que fazem diferença no dia a dia — comunicação, postura, relacionamento, responsabilidade e trabalho em equipe.",
-    "Dessa percepção, o Group Phoenix idealizou o Programa de Formação Profissional e convidou a Visual Software como parceira. A primeira turma já aconteceu. Agora, o programa se prepara para as próximas edições.",
+    "Dessa percepção, o Group Phoenix idealizou o Programa de Formação Profissional e convidou a Visual Software como parceira. O programa já realizou turmas e agora se prepara para as próximas edições.",
   ],
   // `data: null` = ainda não informada. O marco aparece sem data, nunca com uma inventada.
   marcos: [
     { data: null, titulo: "A ideia", texto: "A percepção dos empresários sobre o mercado de trabalho." },
     { data: null, titulo: "A parceria", texto: "Group Phoenix e Visual Software juntos no projeto." },
-    { data: null, titulo: "Primeira turma", texto: "Aulas, convidados e entrega de certificados." },
+    { data: null, titulo: "Turmas realizadas", texto: "Aulas, convidados e entrega de certificados." },
     { data: "Agora", titulo: "Próximas edições", texto: "Inscrições abertas para a nova turma." },
   ],
 };
@@ -126,14 +126,14 @@ export const convidados = [];
 export const segmentos = [];
 
 /* ------------------------------------------------------------------ */
-/* 06 — Primeira turma / 07 — Certificação                             */
+/* 06 — Nossas turmas / 07 — Certificação                              */
 /* ------------------------------------------------------------------ */
 
-export const primeiraTurma = {
+export const turmas = {
   titulo: "Um projeto que",
-  destaque: "já aconteceu.",
+  destaque: "já acontece.",
   texto:
-    "Encontros, convidados, atividades em grupo e, no fim, a entrega dos certificados. A primeira edição mostrou que dá para desenvolver pessoas — e é dela que nasce a próxima.",
+    "Encontros, convidados, atividades em grupo e, no fim, a entrega dos certificados. Cada turma mostra que dá para desenvolver pessoas — e é delas que nasce a próxima.",
   // Depoimentos reais, só com autorização: { texto, nome, papel }.
   depoimentos: [],
 };
@@ -210,6 +210,7 @@ export const transparencia = {
     {
       papel: "Apoio institucional",
       nome: "Prefeitura Municipal",
+      // Logo oficial ainda não recebida. Ao chegar: public/assets/logo-prefeitura.webp
       logo: null,
       texto: "Secretaria de Agricultura e Desenvolvimento Econômico · espaços e apoio institucional.",
     },
@@ -222,6 +223,8 @@ export const transparencia = {
 /** Crédito de desenvolvimento no rodapé. */
 export const credito = {
   nome: "North Creative Market",
+  // Logo ainda não recebida. Ao chegar: public/assets/logo-north.webp
+  logo: null,
   perfil: "@northcreativemarketing",
   url: "https://www.instagram.com/northcreativemarketing/",
 };

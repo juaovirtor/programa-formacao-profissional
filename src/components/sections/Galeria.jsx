@@ -23,7 +23,7 @@ const formatos = [
   "lg:col-span-3 lg:row-span-2",
 ];
 
-/** Seção "Experiência na prática": galeria da primeira turma com ampliação. */
+/** Seção "Experiência na prática": galeria das turmas com ampliação. */
 export default function Galeria() {
   const fotos = useMemo(() => fotosVisiveis(galeria), []);
   const [filtro, setFiltro] = useState("Todos");

@@ -106,7 +106,7 @@ export default function Hero({ onCta }) {
               </div>
             )}
             <span className="absolute -top-3 right-2 rotate-[4deg] rounded-xl bg-violet px-3.5 py-2 font-display text-[10.5px] font-extrabold uppercase tracking-[0.12em] text-white shadow-[0_14px_36px_-12px_rgba(139,92,246,0.9)] sm:text-[11.5px]">
-              Primeira turma realizada
+              Turmas já realizadas
             </span>
           </div>
         </div>
