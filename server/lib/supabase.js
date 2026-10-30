@@ -38,6 +38,24 @@ export function supabaseConfigurado() {
 
 let cliente = null;
 
+/**
+ * Consulta mínima ao banco, usada pela rota /api/health/db.
+ *
+ * O Supabase gratuito pausa o projeto depois de alguns dias sem acesso ao
+ * banco — e com ele pausado, a API inteira para. Uma tarefa agendada no
+ * GitHub (.github/workflows/manter-banco-ativo.yml) chama essa rota a cada
+ * poucos dias para manter o projeto ativo.
+ *
+ * Só conta linhas (head: true): nenhum dado de candidato sai daqui.
+ */
+export async function pingBanco() {
+  const { error } = await getSupabase()
+    .from(TABELA)
+    .select("id", { count: "exact", head: true })
+    .limit(1);
+  if (error) throw error;
+}
+
 export function getSupabase() {
   if (!supabaseConfigurado()) {
     throw new Error(

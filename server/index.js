@@ -4,7 +4,7 @@ import express from "express";
 import multer from "multer";
 
 import { checkPassword, createToken, identificacaoAdmin, requireAdmin } from "./lib/auth.js";
-import { supabaseConfigurado } from "./lib/supabase.js";
+import { pingBanco, supabaseConfigurado } from "./lib/supabase.js";
 import {
   MOTIVO_MAX,
   STATUS,
@@ -46,6 +46,21 @@ const camposArquivo = upload.fields([
 
 app.get("/api/health", (_req, res) => {
   res.json({ ok: true, supabase: supabaseConfigurado() });
+});
+
+/**
+ * Igual à rota acima, mas faz uma consulta real ao banco. É o que mantém o
+ * Supabase gratuito ativo (ver pingBanco). Não devolve nenhum dado.
+ */
+app.get("/api/health/db", async (_req, res) => {
+  if (!supabaseConfigurado()) return res.status(503).json({ ok: false, banco: false });
+  try {
+    await pingBanco();
+    res.json({ ok: true, banco: true });
+  } catch (err) {
+    console.error("[api] banco não respondeu ao health check:", err);
+    res.status(503).json({ ok: false, banco: false });
+  }
 });
 
 /* ------------------------------------------------------------------ */

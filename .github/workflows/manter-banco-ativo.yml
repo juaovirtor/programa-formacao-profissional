@@ -1,0 +1,32 @@
+# Mantém o Supabase (plano gratuito) ativo.
+#
+# O Supabase gratuito pausa o projeto depois de ~7 dias sem acesso ao banco.
+# Com ele pausado, a API recusa tudo e o painel mostra 0 inscrições.
+# Esta tarefa chama a API a cada 3 dias; a API faz uma consulta mínima ao
+# banco (/api/health/db), o que conta como atividade.
+#
+# Não usa nenhuma senha nem chave: a rota é pública e não devolve dados.
+#
+# Atenção: o GitHub desliga tarefas agendadas de repositórios sem nenhum
+# commit há 60 dias (e avisa por e-mail antes). Qualquer push reativa; também
+# dá para reativar em Actions → "Manter banco ativo" → Enable workflow.
+
+name: Manter banco ativo
+
+on:
+  schedule:
+    - cron: "17 11 */3 * *" # a cada 3 dias, 08:17 no horário de Brasília
+  workflow_dispatch: # permite rodar na mão em Actions → Run workflow
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Consultar o banco pela API
+        # O Render gratuito pode levar ~1 min para acordar; por isso o
+        # timeout longo e as novas tentativas.
+        run: |
+          curl --fail --silent --show-error \
+            --max-time 120 --retry 3 --retry-delay 20 --retry-all-errors \
+            https://programa-formacao-api.onrender.com/api/health/db
