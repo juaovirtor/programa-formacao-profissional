@@ -171,8 +171,8 @@ export const inscricao = {
 /* ------------------------------------------------------------------ */
 
 export const instagram = {
-  perfil: "@groupphoenix.programa",
-  url: "https://www.instagram.com/groupphoenix.programa/",
+  perfil: "@groupphoenix.formacao",
+  url: "https://www.instagram.com/groupphoenix.formacao/",
   titulo: "A formação também acontece",
   destaque: "fora da sala.",
   texto: "Registros, convidados, atividades, novidades e tudo o que acontece no Programa de Formação Profissional.",
@@ -239,8 +239,8 @@ export const originOptions = [
 export const contact = {
   whatsapp: "(42) 9 9978-7068",
   whatsappHref: "https://wa.me/5542999787068",
-  instagram: "@groupphoenix.programa",
-  instagramHref: "https://www.instagram.com/groupphoenix.programa/",
+  instagram: "@groupphoenix.formacao",
+  instagramHref: "https://www.instagram.com/groupphoenix.formacao/",
 };
 
 /**
