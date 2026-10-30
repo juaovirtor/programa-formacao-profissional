@@ -36,7 +36,7 @@ export function formatarData(iso) {
 export function mensagemWhatsApp(candidato) {
   const primeiroNome = candidato.nome.trim().split(" ")[0];
   return (
-    `Olá, ${primeiroNome}! Aqui é da ${marca.empresa}. ` +
+    `Olá, ${primeiroNome}! Aqui é da ${marca.grupo}. ` +
     `Recebemos sua inscrição no Programa de Formação Profissional (protocolo ${candidato.protocolo}). ` +
     `Podemos conversar sobre os próximos passos?`
   );
@@ -49,7 +49,7 @@ export function linkWhatsApp(candidato) {
 }
 
 export function linkEmail(candidato) {
-  const assunto = `Programa de Formação Profissional — ${marca.empresa}`;
+  const assunto = `Programa de Formação Profissional — ${marca.grupo}`;
   const corpo = mensagemWhatsApp(candidato);
   return `mailto:${candidato.email}?subject=${encodeURIComponent(assunto)}&body=${encodeURIComponent(corpo)}`;
 }

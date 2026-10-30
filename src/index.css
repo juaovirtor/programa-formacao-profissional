@@ -349,6 +349,25 @@ label {
   animation-delay: var(--surge-delay, 0s);
 }
 
+/* Certificado exemplo flutuando (topo e seção de certificação) */
+@keyframes flutua {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+.flutua {
+  animation: flutua 6s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .flutua {
+    animation: none;
+  }
+}
+
 /* Troca de etapa do formulário */
 @keyframes etapa-entra {
   from {
