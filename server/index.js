@@ -110,6 +110,7 @@ app.get("/api/admin/inscricoes", requireAdmin, async (req, res, next) => {
         novos: inscricoes.filter((i) => i.status === "novo").length,
         emAnalise: inscricoes.filter((i) => i.status === "em_analise").length,
         selecionados: inscricoes.filter((i) => i.status === "selecionado").length,
+        formados: inscricoes.filter((i) => i.status === "formado").length,
       },
     });
   } catch (err) {

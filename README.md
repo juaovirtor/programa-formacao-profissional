@@ -244,11 +244,11 @@ Respostas: `201` inscrição criada · `400` dado inválido · **`409` e-mail j�
 
 Acesso pelo ícone de perfil no canto superior direito do site.
 
-- Indicadores: inscrições, novos, em análise e selecionados
+- Indicadores: inscrições, novos, em análise, selecionados e formados
 - Busca por nome, e-mail, telefone ou protocolo, e filtro por situação
 - Ficha: foto, telefone, e-mail, origem, data da inscrição, currículo em PDF e observações
 - Contato em um clique: WhatsApp com mensagem pronta, e-mail e telefone
-- Situação: Novo → Em análise → Selecionado / Não selecionado
+- Situação: Novo → Em análise → Selecionado → Formado / Não selecionado
 
 Os dados vêm do Supabase. Como os buckets são privados, a foto e o currículo são exibidos
 por **links assinados com validade de 1 hora** — depois disso o link expira sozinho. Se as

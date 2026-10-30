@@ -115,7 +115,7 @@ create table if not exists public.inscricoes (
   consentimento_em      timestamptz,
   consentimento_texto   text not null default '',
   status                text not null default 'novo'
-                        check (status in ('novo','em_analise','selecionado','nao_selecionado')),
+                        check (status in ('novo','em_analise','selecionado','formado','nao_selecionado')),
   observacoes           text not null default '',
   created_at            timestamptz not null default now(),
   updated_at            timestamptz not null default now()

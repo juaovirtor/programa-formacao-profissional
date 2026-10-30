@@ -15,7 +15,7 @@ import { EXTENSOES } from "./validacao.js";
  * O banco guarda apenas o caminho do arquivo, nunca o arquivo em si.
  */
 
-export const STATUS = ["novo", "em_analise", "selecionado", "nao_selecionado"];
+export const STATUS = ["novo", "em_analise", "selecionado", "formado", "nao_selecionado"];
 
 /** Código do Postgres para violação de índice único. */
 const ERRO_DUPLICADO = "23505";

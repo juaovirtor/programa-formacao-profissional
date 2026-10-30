@@ -45,7 +45,7 @@ create table if not exists public.inscricoes (
 
   -- Acompanhamento pelo painel
   status                text not null default 'novo'
-                        check (status in ('novo', 'em_analise', 'selecionado', 'nao_selecionado')),
+                        check (status in ('novo', 'em_analise', 'selecionado', 'formado', 'nao_selecionado')),
   observacoes           text not null default '',
 
   -- Exclusão lógica. Nada é apagado: a inscrição sai da lista ativa mas

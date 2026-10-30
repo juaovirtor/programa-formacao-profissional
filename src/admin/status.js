@@ -4,6 +4,7 @@ export const STATUS = {
   novo: { label: "Novo", chip: "border-blue/40 bg-blue/12 text-blue-soft", dot: "bg-blue" },
   em_analise: { label: "Em análise", chip: "border-violet/45 bg-violet/12 text-violet", dot: "bg-violet" },
   selecionado: { label: "Selecionado", chip: "border-lime/45 bg-lime/12 text-lime", dot: "bg-lime" },
+  formado: { label: "Formado", chip: "border-amber-400/45 bg-amber-400/12 text-amber-300", dot: "bg-amber-400" },
   nao_selecionado: {
     label: "Não selecionado",
     chip: "border-line bg-white/[0.04] text-mute",
@@ -11,7 +12,7 @@ export const STATUS = {
   },
 };
 
-export const STATUS_ORDER = ["novo", "em_analise", "selecionado", "nao_selecionado"];
+export const STATUS_ORDER = ["novo", "em_analise", "selecionado", "formado", "nao_selecionado"];
 
 export function formatarTelefone(digits = "") {
   const d = digits.replace(/\D/g, "");

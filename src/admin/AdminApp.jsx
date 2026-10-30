@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   AlertCircle,
   ClipboardCheck,
+  GraduationCap,
   LogOut,
   RefreshCw,
   Search,
@@ -70,6 +71,7 @@ export default function AdminApp() {
       novos: inscricoes.filter((r) => r.status === "novo").length,
       emAnalise: inscricoes.filter((r) => r.status === "em_analise").length,
       selecionados: inscricoes.filter((r) => r.status === "selecionado").length,
+      formados: inscricoes.filter((r) => r.status === "formado").length,
     }),
     [inscricoes],
   );
@@ -147,8 +149,10 @@ export default function AdminApp() {
         </h1>
 
         {/* Indicadores */}
-        <div className="mt-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
+        {/* 5 indicadores: no celular o total ocupa a linha inteira e os outros 4 ficam 2 a 2. */}
+        <div className="mt-6 grid grid-cols-2 gap-3 lg:grid-cols-5">
           <Indicador
+            className="col-span-2 lg:col-span-1"
             icone={verExcluidas ? Trash2 : Users}
             label={verExcluidas ? "Excluídas" : "Inscrições"}
             valor={resumo.total}
@@ -157,6 +161,7 @@ export default function AdminApp() {
           <Indicador icone={Sparkles} label="Novos" valor={resumo.novos} cor="text-blue-soft" />
           <Indicador icone={ClipboardCheck} label="Em análise" valor={resumo.emAnalise} cor="text-violet" />
           <Indicador icone={UserRound} label="Selecionados" valor={resumo.selecionados} cor="text-lime" />
+          <Indicador icone={GraduationCap} label="Formados" valor={resumo.formados} cor="text-amber-300" />
         </div>
 
         {/* Busca e filtros */}
@@ -287,9 +292,9 @@ export default function AdminApp() {
   );
 }
 
-function Indicador({ icone: Icone, label, valor, cor }) {
+function Indicador({ icone: Icone, label, valor, cor, className = "" }) {
   return (
-    <div className="edge rounded-2xl border border-line bg-panel/60 p-4 sm:p-5">
+    <div className={`edge rounded-2xl border border-line bg-panel/60 p-4 sm:p-5 ${className}`}>
       <div className="flex items-center gap-2">
         <Icone size={15} strokeWidth={2.1} className={cor} />
         <p className="font-display text-[10.5px] font-semibold uppercase tracking-[0.16em] text-mute">{label}</p>
