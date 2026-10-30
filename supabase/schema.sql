@@ -32,8 +32,9 @@ create table if not exists public.inscricoes (
   email                 text not null,
 
   -- Caminho do arquivo no Storage. O arquivo em si NUNCA fica no banco.
-  foto_path             text not null,
-  curriculo_path        text not null,
+  -- Foto e currículo são opcionais: NULL quando o candidato não enviou.
+  foto_path             text,
+  curriculo_path        text,
 
   origem                text not null,
   origem_outro          text not null default '',

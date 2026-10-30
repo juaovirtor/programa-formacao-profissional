@@ -156,7 +156,7 @@ export const reasons = [
 ];
 
 export const steps = [
-  { number: "01", title: "Inscrição", text: "Preencha o formulário com seus dados, foto e currículo." },
+  { number: "01", title: "Inscrição", text: "Preencha o formulário com seus dados. Foto e currículo são opcionais." },
   { number: "02", title: "Avaliação das inscrições", text: "Nosso time analisa todas as inscrições recebidas." },
   { number: "03", title: "Seleção dos participantes", text: "As vagas são confirmadas e os selecionados são avisados." },
   { number: "04", title: "4 semanas de formação", text: "Treinamento presencial, intensivo e 100% prático." },
@@ -215,7 +215,7 @@ export const privacidade = {
     {
       titulo: "O que coletamos",
       texto:
-        "Nome completo, telefone/WhatsApp, e-mail, foto, currículo em PDF e como você conheceu o programa. Nada além disso é solicitado.",
+        "Nome completo, telefone/WhatsApp, e-mail e como você conheceu o programa. Foto e currículo em PDF são opcionais e só são guardados se você enviar. Nada além disso é solicitado.",
     },
     {
       titulo: "Para que usamos",

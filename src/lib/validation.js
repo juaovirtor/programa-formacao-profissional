@@ -53,7 +53,7 @@ export function validateEmail(value) {
  * arquivo final que precisa caber no limite, não o que saiu da câmera.
  */
 export function validateFoto(file) {
-  if (!file) return "Envie uma foto para continuar.";
+  if (!file) return ""; // opcional
   if (!PHOTO_TYPES.includes(file.type)) return "A foto precisa ser JPG, PNG ou WEBP.";
   if (file.size > PHOTO_MAX_MB * 1024 * 1024) {
     return (
@@ -74,7 +74,7 @@ export function validateFotoOriginal(file) {
 }
 
 export function validateCurriculo(file) {
-  if (!file) return "Envie seu currículo em PDF.";
+  if (!file) return ""; // opcional
   const isPdf = file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf");
   if (!isPdf) return "O currículo precisa estar em PDF.";
   if (file.size > CV_MAX_MB * 1024 * 1024) return `O currículo deve ter no máximo ${CV_MAX_MB}MB.`;

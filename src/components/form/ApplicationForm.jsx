@@ -36,7 +36,7 @@ const EMPTY = {
 
 const stepTitles = [
   { eyebrow: "Etapa 01", title: "Seus dados", text: "Como podemos falar com você." },
-  { eyebrow: "Etapa 02", title: "Seu perfil", text: "Envie sua foto e seu currículo." },
+  { eyebrow: "Etapa 02", title: "Seu perfil", text: "Foto e currículo são opcionais — envie se tiver." },
   { eyebrow: "Etapa 03", title: "Como você conheceu?", text: "Isso nos ajuda a chegar em mais jovens." },
   { eyebrow: "Etapa 04", title: "Confira e envie", text: "Revise os dados antes de finalizar." },
 ];
@@ -245,7 +245,7 @@ export default function ApplicationForm() {
                 {/* ---------------- ETAPA 02 — PERFIL ---------------- */}
                 {step === 1 && (
                   <div className="space-y-5">
-                    <Field label="Foto" htmlFor="foto" error={errors.foto}>
+                    <Field label="Foto" htmlFor="foto" error={errors.foto} required={false} hint="Opcional">
                       {/*
                         accept="image/*" de propósito: no celular é o que abre
                         a galeria inteira e deixa o iPhone converter HEIC em
@@ -266,7 +266,13 @@ export default function ApplicationForm() {
                       />
                     </Field>
 
-                    <Field label="Currículo" htmlFor="curriculo" error={errors.curriculo}>
+                    <Field
+                      label="Currículo"
+                      htmlFor="curriculo"
+                      error={errors.curriculo}
+                      required={false}
+                      hint="Opcional · não tem currículo ainda? Pode seguir sem ele."
+                    >
                       <FileUpload
                         id="curriculo"
                         variant="pdf"
@@ -337,8 +343,8 @@ export default function ApplicationForm() {
                     <ReviewRow label="Nome" value={data.nome} onEdit={() => goTo(0)} />
                     <ReviewRow label="Telefone" value={data.telefone} onEdit={() => goTo(0)} />
                     <ReviewRow label="E-mail" value={data.email} onEdit={() => goTo(0)} />
-                    <ReviewRow label="Foto" value={data.foto?.name} onEdit={() => goTo(1)} />
-                    <ReviewRow label="Currículo" value={data.curriculo?.name} onEdit={() => goTo(1)} />
+                    <ReviewRow label="Foto" value={data.foto?.name ?? "Não enviada"} onEdit={() => goTo(1)} />
+                    <ReviewRow label="Currículo" value={data.curriculo?.name ?? "Não enviado"} onEdit={() => goTo(1)} />
                     <ReviewRow
                       label="Origem"
                       value={

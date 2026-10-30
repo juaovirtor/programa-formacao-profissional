@@ -174,9 +174,10 @@ export default function CandidateDetail({ candidato, onFechar, onAtualizar, onEx
                     : candidato.origem
                 }
               />
-              <Info label="Currículo" valor={candidato.curriculoNome} />
+              <Info label="Currículo" valor={candidato.curriculoNome ?? "Não enviado"} />
             </dl>
-            {candidato.curriculoUrl ? (
+            {/* Currículo é opcional: sem arquivo, não há link nem aviso de expiração. */}
+            {!candidato.curriculoNome ? null : candidato.curriculoUrl ? (
               <a
                 href={withToken(candidato.curriculoUrl)}
                 target="_blank"

@@ -64,19 +64,18 @@ export function validarInscricao(corpo, arquivos) {
     return { ok: false, erro: "É preciso autorizar o uso dos dados para enviar a inscrição." };
   }
 
-  if (!foto) return { ok: false, erro: "Envie uma foto." };
-  if (!FOTO_TIPOS.includes(foto.mimetype)) {
+  // Foto e currículo são opcionais. Se vierem, precisam respeitar as regras.
+  if (foto && !FOTO_TIPOS.includes(foto.mimetype)) {
     return { ok: false, erro: "A foto precisa ser JPG, PNG ou WEBP." };
   }
-  if (foto.size > FOTO_MAX) {
+  if (foto && foto.size > FOTO_MAX) {
     return { ok: false, erro: "A foto deve ter no máximo 5MB." };
   }
 
-  if (!curriculo) return { ok: false, erro: "Envie o currículo em PDF." };
-  if (!CURRICULO_TIPOS.includes(curriculo.mimetype)) {
+  if (curriculo && !CURRICULO_TIPOS.includes(curriculo.mimetype)) {
     return { ok: false, erro: "O currículo precisa estar em PDF." };
   }
-  if (curriculo.size > CURRICULO_MAX) {
+  if (curriculo && curriculo.size > CURRICULO_MAX) {
     return { ok: false, erro: "O currículo deve ter no máximo 10MB." };
   }
 
@@ -92,7 +91,7 @@ export function validarInscricao(corpo, arquivos) {
       consentimento_em: new Date().toISOString(),
       consentimento_texto: String(corpo.consentimento_texto ?? "").slice(0, 1000),
     },
-    foto,
-    curriculo,
+    foto: foto ?? null,
+    curriculo: curriculo ?? null,
   };
 }

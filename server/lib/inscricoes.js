@@ -63,8 +63,10 @@ const COLUNAS =
 /* ------------------------------------------------------------------ */
 
 /**
- * Grava a inscrição inteira: sobe os dois arquivos e cria o registro.
- * Só devolve sucesso se as três etapas concluírem. Se qualquer uma falhar,
+ * Grava a inscrição inteira: sobe os arquivos enviados e cria o registro.
+ * Foto e currículo são opcionais — o que não vier simplesmente não é enviado
+ * e o caminho fica nulo no banco.
+ * Só devolve sucesso se todas as etapas concluírem. Se qualquer uma falhar,
  * os arquivos já enviados são apagados para não deixar lixo no Storage.
  *
  * @returns {Promise<{ok: true, protocolo: string, id: string}
@@ -81,8 +83,8 @@ export async function criarInscricao({ dados, foto, curriculo }) {
 
   // O id é gerado aqui para servir também de pasta dos arquivos no Storage.
   const id = randomUUID();
-  const fotoPath = `${id}/foto.${EXTENSOES[foto.mimetype]}`;
-  const curriculoPath = `${id}/curriculo.pdf`;
+  const fotoPath = foto ? `${id}/foto.${EXTENSOES[foto.mimetype]}` : null;
+  const curriculoPath = curriculo ? `${id}/curriculo.pdf` : null;
 
   const enviados = [];
 
@@ -96,28 +98,32 @@ export async function criarInscricao({ dados, foto, curriculo }) {
     }
   };
 
-  // 1) Foto
-  const envioFoto = await supabase.storage
-    .from(BUCKET_FOTOS)
-    .upload(fotoPath, foto.buffer, { contentType: foto.mimetype, upsert: false });
+  // 1) Foto (opcional)
+  if (foto) {
+    const envioFoto = await supabase.storage
+      .from(BUCKET_FOTOS)
+      .upload(fotoPath, foto.buffer, { contentType: foto.mimetype, upsert: false });
 
-  if (envioFoto.error) {
-    console.error("[inscricoes] falha no upload da foto:", envioFoto.error);
-    return { ok: false, erro: "Não conseguimos salvar sua foto. Tente novamente." };
+    if (envioFoto.error) {
+      console.error("[inscricoes] falha no upload da foto:", envioFoto.error);
+      return { ok: false, erro: "Não conseguimos salvar sua foto. Tente novamente." };
+    }
+    enviados.push({ bucket: BUCKET_FOTOS, path: fotoPath });
   }
-  enviados.push({ bucket: BUCKET_FOTOS, path: fotoPath });
 
-  // 2) Currículo
-  const envioCurriculo = await supabase.storage
-    .from(BUCKET_CURRICULOS)
-    .upload(curriculoPath, curriculo.buffer, { contentType: curriculo.mimetype, upsert: false });
+  // 2) Currículo (opcional)
+  if (curriculo) {
+    const envioCurriculo = await supabase.storage
+      .from(BUCKET_CURRICULOS)
+      .upload(curriculoPath, curriculo.buffer, { contentType: curriculo.mimetype, upsert: false });
 
-  if (envioCurriculo.error) {
-    console.error("[inscricoes] falha no upload do currículo:", envioCurriculo.error);
-    await limpar();
-    return { ok: false, erro: "Não conseguimos salvar seu currículo. Tente novamente." };
+    if (envioCurriculo.error) {
+      console.error("[inscricoes] falha no upload do currículo:", envioCurriculo.error);
+      await limpar();
+      return { ok: false, erro: "Não conseguimos salvar seu currículo. Tente novamente." };
+    }
+    enviados.push({ bucket: BUCKET_CURRICULOS, path: curriculoPath });
   }
-  enviados.push({ bucket: BUCKET_CURRICULOS, path: curriculoPath });
 
   // 3) Registro no banco
   const { data, error } = await supabase
@@ -312,7 +318,8 @@ function paraPublico(row, links) {
     // é justamente disso que o histórico depende.
     fotoUrl: links[row.foto_path] ?? null,
     curriculoUrl: links[row.curriculo_path] ?? null,
-    curriculoNome: `curriculo-${row.protocolo}.pdf`,
+    // null quando o candidato não enviou currículo (é opcional).
+    curriculoNome: row.curriculo_path ? `curriculo-${row.protocolo}.pdf` : null,
     excluida: Boolean(row.deleted_at),
     exclusao: row.deleted_at
       ? {
