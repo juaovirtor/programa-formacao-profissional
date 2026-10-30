@@ -91,7 +91,7 @@ export default function SuccessModal({ open, protocolo, onClose }) {
           Você acabou de dar o primeiro passo.
         </p>
         <p className="mx-auto mt-3 max-w-[380px] text-[14px] leading-relaxed text-mute-soft">
-          Recebemos seus dados para o Programa de Formação Profissional da {marca.empresa}.
+          Recebemos seus dados para o Programa de Formação Profissional da {marca.grupo}.
         </p>
 
         {protocolo && (

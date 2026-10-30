@@ -8,7 +8,7 @@ import FileUpload from "./FileUpload";
 import PrivacyNotice from "./PrivacyNotice";
 import StepIndicator, { STEPS } from "./StepIndicator";
 import SuccessModal from "./SuccessModal";
-import { originOptions, privacidade } from "../../data/program";
+import { inscricao, originOptions, privacidade } from "../../data/program";
 import { submitApplication } from "../../lib/api";
 import { otimizarFoto } from "../../lib/imagem";
 import {
@@ -162,14 +162,27 @@ export default function ApplicationForm() {
       </div>
 
       <Container>
-        <Reveal className="mx-auto max-w-[640px] text-center">
-          <Eyebrow tone="lime">Inscrição</Eyebrow>
-          <h2 className="mt-5 font-display text-[30px] font-extrabold uppercase leading-[1.03] tracking-[-0.02em] sm:text-[42px] lg:text-[46px]">
-            Sua inscrição <span className="text-lime">começa aqui</span>.
+        <Reveal className="mx-auto max-w-[760px] text-center">
+          <Eyebrow tone="lime">{inscricao.aberta ? "Inscrições abertas" : "Próximas turmas"}</Eyebrow>
+          <h2 className="mt-5 font-display text-[28px] font-extrabold uppercase leading-[1.03] tracking-[-0.02em] sm:text-[40px] lg:text-[46px]">
+            {inscricao.titulo} <span className="text-lime">{inscricao.destaque}</span>
           </h2>
-          <p className="mx-auto mt-4 max-w-[420px] text-[15px] text-mute-soft sm:text-[16.5px]">
-            Preencha seus dados. É rápido e gratuito.
+          <p className="mx-auto mt-4 max-w-[600px] text-[15px] leading-relaxed text-mute-soft sm:text-[16.5px]">
+            {inscricao.texto}
           </p>
+          <dl className="mx-auto mt-8 grid max-w-[720px] grid-cols-2 gap-2.5 text-left sm:gap-3 lg:grid-cols-4">
+            {inscricao.info.map((item) => (
+              <div
+                key={item.label}
+                className={`rounded-2xl border px-4 py-3.5 ${item.destaque ? "border-lime/45" : "border-line"}`}
+              >
+                <dt className="text-[11.5px] text-mute">{item.label}</dt>
+                <dd className={`mt-1 font-display text-[13px] font-bold leading-snug ${item.destaque ? "text-lime" : "text-white"}`}>
+                  {item.valor}
+                </dd>
+              </div>
+            ))}
+          </dl>
         </Reveal>
 
         <Reveal delay={0.08} className="mx-auto mt-10 max-w-[720px] sm:mt-14">
